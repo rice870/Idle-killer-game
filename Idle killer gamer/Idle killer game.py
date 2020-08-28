@@ -114,11 +114,11 @@ class BulletClass(pygame.sprite.Sprite):
 
         super().__init__()
 
-        self.score = 0
         self.image = pygame.Surface([9, 9])
         self.image.fill(WHITE)
         self.image.set_colorkey(WHITE)
         self.rect = self.image.get_rect()
+        self.score = 0
 
         self.rect.x = x
         self.rect.y = y
@@ -136,16 +136,17 @@ class BulletClass(pygame.sprite.Sprite):
 
     def update(self):
         self.move()
-        self.score = 0
         bullet_enemy_collision = pygame.sprite.spritecollide(self, enemy_list, False)
-        if self.rect.x > size[0] or self.rect.x < 0 or self.rect.y > size[1] or self.rect.y < 0 or bullet_enemy_collision:
-            for enemy in bullet_enemy_collision:
-                self.score += 1
-                enemy.health -= 1
-                enemy.display_health()
-                if enemy.health <= 0:
-                    enemy.kill()
+        for enemy in bullet_enemy_collision:
+            enemy.health -= 1
+            enemy.display_health()
+            if enemy.health <= 0:
+                enemy.kill()
+            self.score += 1
+        if self.rect.x > size[0] or self.rect.x < 0 or self.rect.y > size[1] or self.rect.y < 0:
             self.kill()
+
+            return self.score
 
 
 class Enemy(pygame.sprite.Sprite):
@@ -182,6 +183,12 @@ class Enemy(pygame.sprite.Sprite):
         pygame.draw.line(self.image, BLACK, [0, 0], [33, 0], 2)
         pygame.draw.line(self.image, RED, [0, 0], [int(33 * (self.health/self.max_health)), 0], 2)
 
+    def update(self, *args):
+        self.display_health()
+        if score > 10:
+            self.image = pygame.image.load('meme.png').convert()
+            self.image.set_colorkey(WHITE)
+
 
 pygame.init()
 
@@ -195,7 +202,7 @@ sprite_list = pygame.sprite.Group()
 
 score = 0
 
-enemy_spawns_per_second = 1
+enemy_spawns_per_second = 10
 time_elapsed = 0
 
 my_font = pygame.font.SysFont('adobedevanagaribolditalic', 30)
@@ -254,7 +261,10 @@ while not done:
 
     # Updates the players position and most recent movement (apart from no movement)
     for sprite in sprite_list:
-        sprite.update()
+        try:
+            score += sprite.update()
+        except TypeError:
+            pass
 
     time_elapsed += clock.get_time()
 
