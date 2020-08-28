@@ -39,7 +39,7 @@ class Game:
 
             # --- Screen-clearing code goes here
 
-            # If you want a background image, replace this clear with blit'ing thebackground image.
+            # If you want a background image, replace this clear with blit'ing the background image.
             self.screen.fill(WHITE)
 
             # --- Drawing code should go here
