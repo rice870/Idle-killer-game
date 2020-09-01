@@ -9,44 +9,81 @@ Make Initial classes STARTEd 25/08/2020
 import pygame
 
 # Define some colors
-BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
-RED = (255, 0, 0)
-GREEN = (0, 255, 0)
-BLUE = (0, 0, 255)
-YELLOW = (255, 255, 0)
-CYAN = (0, 55, 255)
-MAGENTA = (255, 0, 255)
-SILVER = (192, 192, 192)
+BLACK =     (  0,   0,   0)
+WHITE =     (255, 255, 255)
+RED =       (255,   0,   0)
+GREEN =     (  0, 255,   0)
+BLUE =      (  0,   0, 255)
+YELLOW =    (255, 255,   0)
+CYAN =      (  0,  55, 255)
+MAGENTA =   (255,   0, 255)
+SILVER =    (192, 192, 192)
+
+def blitRotate(surf, image, pos, originPos, angle):
+    # from https://stackoverflow.com/questions/4183208/how-do-i-rotate-an-image-around-its-center-using-pygame#:~
+    # :text=Surface%20)%20can%20be%20rotated%20by,rotate%20.&text=This%20is%20cause%2C%20because%20the,by%20mult
+    # iples%20of%2090%20degrees). By https://stackoverflow.com/users/5577765/rabbid76
+    # calcaulate the axis aligned bounding box of the rotated image
+    w, h       = image.get_size()
+    box        = [pygame.math.Vector2(p) for p in [(0, 0), (w, 0), (w, -h), (0, -h)]]
+    box_rotate = [p.rotate(angle) for p in box]
+    min_box    = (min(box_rotate, key=lambda p: p[0])[0], min(box_rotate, key=lambda p: p[1])[1])
+    max_box    = (max(box_rotate, key=lambda p: p[0])[0], max(box_rotate, key=lambda p: p[1])[1])
+
+    # calculate the translation of the pivot
+    pivot        = pygame.math.Vector2(originPos[0], -originPos[1])
+    pivot_rotate = pivot.rotate(angle)
+    pivot_move   = pivot_rotate - pivot
+
+    # calculate the upper left origin of the rotated image
+    origin = (pos[0] - originPos[0] + min_box[0] - pivot_move[0], pos[1] - originPos[1] - max_box[1] + pivot_move[1])
+
+    # get a rotated image
+    rotated_image = pygame.transform.rotate(image, angle)
+
+    # rotate and blit the image
+    surf.blit(rotated_image, origin)
 
 
 class Game:
     def __init__(self):
-        self.done = False
+        self.sprite_list = pygame.sprite.Group()
         self.size = (1000, 500)
         self.screen = pygame.display.set_mode(self.size)
         self.done = False
         self.clock = pygame.time.Clock()
 
+
+
+    def check_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.done = True
+
     def do(self):
+        player = Player()
+        self.sprite_list.add(player)
+
         while not self.done:
             # --- Main event loop
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.done = True
+            self.check_events()
 
             # --- Game logic should go here
 
             # --- Screen-clearing code goes here
 
             # If you want a background image, replace this clear with blit'ing the background image.
-            self.screen.fill(WHITE)
+            self.screen.fill(0x0080ff)
 
             # --- Drawing code should go here
+            self.sprite_list.draw(self.screen)
 
             pygame.display.flip()
 
             self.clock.tick(60)
+
+        for sprite in self.sprite_list:
+            sprite.kill()
 
 
 class Player(pygame.sprite.Sprite):
@@ -61,6 +98,8 @@ class Player(pygame.sprite.Sprite):
 
         # Helps with dimensioning and positioning the sprite
         self.rect = self.image.get_rect()
+        self.rect.x = 10
+        self.rect.y = 10
 
 
 pygame.init()
