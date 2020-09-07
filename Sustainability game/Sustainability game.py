@@ -19,7 +19,8 @@ CYAN =      (  0,  55, 255)
 MAGENTA =   (255,   0, 255)
 SILVER =    (192, 192, 192)
 
-def blitRotate(surf, image, pos, originPos, angle):
+
+def blit_rotate(surf, image, pos, originPos, angle):
     # from https://stackoverflow.com/questions/4183208/how-do-i-rotate-an-image-around-its-center-using-pygame#:~
     # :text=Surface%20)%20can%20be%20rotated%20by,rotate%20.&text=This%20is%20cause%2C%20because%20the,by%20mult
     # iples%20of%2090%20degrees). By https://stackoverflow.com/users/5577765/rabbid76
@@ -45,6 +46,14 @@ def blitRotate(surf, image, pos, originPos, angle):
     surf.blit(rotated_image, origin)
 
 
+def change_costume(object, picture, x, y, colourkey):
+    object.image = pygame.image.load(picture).convert()
+    object.image.set_colorkey(colourkey)
+    object.rect = object.image.get_rect()
+    object.rect.x = x
+    object.rect.y = y
+
+
 class Game:
     def __init__(self):
         self.sprite_list = pygame.sprite.Group()
@@ -53,16 +62,14 @@ class Game:
         self.done = False
         self.clock = pygame.time.Clock()
 
-
-
     def check_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.done = True
 
     def do(self):
-        player = Player()
-        self.sprite_list.add(player)
+        menu_bg = Menu('Design.png')
+        self.sprite_list.add(menu_bg)
 
         while not self.done:
             # --- Main event loop
@@ -90,16 +97,14 @@ class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
 
-        # I get the image bad.png from my files within the same directory and convert it to a format pycharm can easily understand.
-        self.image = pygame.image.load('Design.png').convert()
+        change_costume(self, 'Design.png', 10, 10, WHITE)
 
-        # This makes white colours transparent.
-        self.image.set_colorkey(WHITE)
 
-        # Helps with dimensioning and positioning the sprite
-        self.rect = self.image.get_rect()
-        self.rect.x = 10
-        self.rect.y = 10
+class Menu(pygame.sprite.Sprite):
+    def __init__(self, picture):
+        super().__init__()
+
+        change_costume(self, picture, 0, 0, WHITE)
 
 
 pygame.init()
