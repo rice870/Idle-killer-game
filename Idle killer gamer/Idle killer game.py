@@ -56,7 +56,7 @@ def blitRotate(surf, image, pos, originPos, angle):
     pivot_rotate = pivot.rotate(angle)
     pivot_move   = pivot_rotate - pivot
 
-    # calculate the upper left origin of the rotated image
+    # calculate the upper left origin of the rotated image.
     origin = (pos[0] - originPos[0] + min_box[0] - pivot_move[0], pos[1] - originPos[1] - max_box[1] + pivot_move[1])
 
     # get a rotated image
