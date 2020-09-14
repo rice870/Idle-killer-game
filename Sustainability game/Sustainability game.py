@@ -331,6 +331,7 @@ class Game:
         self.day += 1
 
         self.phase = 'menu'
+        self.player.fish_caught = 0
 
     def fishing_minigame(self):
         # This is the little bit you need to win to catch the fish. My event loop doesn't include quitting the game.
@@ -464,13 +465,11 @@ class Game:
                 self.sleep('That\'s enough fish for today!')
             elif self.phase == 'fish':
                 self.fish_game()
-            else:
-                # If you complete tha game, it gives you a goal to do it better next time.
-                self.screen.fill(BLACK)
-                self.screen.blit(self.huge_font.render(f"Score to beat: ${self.money}", True, WHITE), (350, 150))
-                pygame.display.update()
-                pygame.time.delay(10000)
-                break
+        self.screen.fill(BLACK)
+        self.screen.blit(self.huge_font.render(f"Score to beat: ${self.money}", True, WHITE), (350, 150))
+        pygame.display.update()
+        pygame.time.delay(10000)
+
 
 
 pygame.init()
