@@ -161,6 +161,7 @@ class Game:
         # Done is a bool saying whether the entire game is done or not.
         self.done = False
         self.clock = pygame.time.Clock()
+        self.all_done = False
 
         # All of these instances of the menu class are general buttons to help navigation of this game
         self.fish = Menu('Images/fish.png', 569, 215, WHITE, 0, 1)
@@ -197,7 +198,7 @@ class Game:
         # self explanatory counters
         self.day = 1
         self.money = 0
-        self.fish_count = 20
+        self.fish_count = 4
         self.time_since_last_fish = 0
 
         # Finished dictates whether a phase is done or not.
@@ -225,6 +226,7 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.done = True
+                    self.all_done = True
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     # This allows you to skip it
                     self.phase = 'menu'
@@ -250,14 +252,13 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.done = True
+                    self.all_done = True
                 elif event.type == pygame.MOUSEBUTTONDOWN and self.selecting_bed():
                     self.phase = 'sleep'
                     self.finished = True
                 elif event.type == pygame.MOUSEBUTTONDOWN and self.selecting_fish():
                     self.phase = 'fish'
                     self.finished = True
-                elif event.type == pygame.MOUSEBUTTONUP:
-                    print(pygame.mouse.get_pos())
 
             # --- Game logic should go here
 
@@ -305,6 +306,7 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.done = True
+                    self.all_done = True
 
             # Clear the screen
             self.screen.fill(BLACK)
@@ -352,7 +354,6 @@ class Game:
             # If you have caught the fish, end the game.
             if self.caught:
                 break
-            print(time)
             pygame.display.flip()
             self.clock.tick(60)
 
@@ -407,6 +408,7 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.done = True
+                    self.all_done = True
                 elif self.leave_fishing_button.rect.x <= pygame.mouse.get_pos()[0] <= self.size[0] and self.leave_fishing_button.rect.y <= pygame.mouse.get_pos()[1] <= self.size[1] and event.type == pygame.MOUSEBUTTONDOWN:
                     # If you click leave, then you leave.
                     self.leave_fishing_method()
@@ -422,8 +424,16 @@ class Game:
 
             self.screen.fill(0x0080ff)
 
+            if self.fish_count <= 0:
+                self.finished = True
+                self.done = True
+                self.screen.blit(self.huge_font.render("You killed all the fish!", True, BLACK), (400, 200))
+                pygame.display.update()
+                pygame.time.wait(1000)
+
             for sprite in self.sprite_list:
                 sprite.draw(self.screen)
+            self.fishy.update()
 
             if self.time_since_last_fish > 5000:
                 # Switches from sleepy to shocked person after 5 seconds (there is a fish)
@@ -436,7 +446,6 @@ class Game:
                 if self.caught:
                     self.player.fish_caught += 1
                     self.fish_catch()
-                    print(self.time_since_last_fish)
                 self.time_since_last_fish = 0
                 self.player.picture = 'Images/my character1.png'
 
@@ -468,8 +477,7 @@ class Game:
         self.screen.fill(BLACK)
         self.screen.blit(self.huge_font.render(f"Score to beat: ${self.money}", True, WHITE), (350, 150))
         pygame.display.update()
-        pygame.time.delay(10000)
-
+        pygame.time.delay(5000)
 
 
 pygame.init()
@@ -478,7 +486,7 @@ pygame.display.set_caption("Fishing Sim")
 
 game = Game()
 
-while not game.done:
+while not game.all_done:
     # This makes the game repeat when done
     game = Game()
     game.do()
