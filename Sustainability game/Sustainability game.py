@@ -28,6 +28,8 @@ def find_rel_angle(cx, cy, ox, oy):
 
 
 def draw(surf, image, topleft, angle):
+    # https://stackoverflow.com/questions/4183208/how-do-i-rotate-an-image-around-its-center-using-pygame/54714144
+    # By user Rabbid76
     rotated_image = pygame.transform.rotate(image, angle)
     new_rect = rotated_image.get_rect(center=image.get_rect(topleft=topleft).center)
 
