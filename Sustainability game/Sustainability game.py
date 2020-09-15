@@ -200,7 +200,7 @@ class Game:
         # self explanatory counters
         self.day = 1
         self.money = 0
-        self.fish_count = 4
+        self.fish_count = 20
         self.time_since_last_fish = 0
 
         # Finished dictates whether a phase is done or not.
