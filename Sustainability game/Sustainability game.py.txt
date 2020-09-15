@@ -149,9 +149,9 @@ class Game:
     # This is the main class. It is the majority of the game.
     def __init__(self):
         # These are the fonts I use in my game. They're all the same font, just different sizes, as you cannot change their size after declaring them.
-        self.my_font = pygame.font.Font('mainfont.otf', 30)
-        self.huge_font = pygame.font.Font('mainfont.otf', 50)
-        self.small_font = pygame.font.Font('mainfont.otf', 20)
+        self.my_font = pygame.font.SysFont('adobedevanagaribolditalic', 30)
+        self.huge_font = pygame.font.SysFont('adobedevanagaribolditalic', 50)
+        self.small_font = pygame.font.SysFont('adobedevanagaribolditalic', 20)
 
         # This is a list of the sprites so it's easier to remove them all, have them each do a specific task (for example update or draw)
         self.sprite_list = pygame.sprite.Group()
