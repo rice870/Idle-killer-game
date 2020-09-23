@@ -136,13 +136,12 @@ class Fishes(GameSprites):
         self.picture = f'Images/{self.fish_type}.png'
         self.x = 420
         self.y = 270
-        self.size_change = 4
+        self.size_change = 1
         self.change_costume()
 
     def update(self):
-        super().__init__()
         # Every frame it chooses a new type of fish. It's excessive, but easier than making it more efficiently choose a new fish when you need a new fish.
-        self.fish_type = random.choice(list(self.fish_list.keys()))
+        pass
 
 
 class Game:
@@ -361,6 +360,9 @@ class Game:
 
     def fish_catch(self):
         # This function displays the caught fish
+        self.fishy.fish_type = random.choice(list(self.fishy.fish_list.keys()))
+        self.fishy.picture = f'Images/{self.fishy.fish_type}.png'
+        self.fishy.change_costume()
         self.finished = False
         self.time_since_last_fish = 0
         self.screen.fill(0x0080ff)
